@@ -1,0 +1,99 @@
+<!--
+title: Selfhosted Hacking Test pt.1
+description: 
+published: true
+date: 2025-01-15T13:23:07.790Z
+tags: selfhosted, hacking, private
+editor: ckeditor
+dateCreated: 2025-01-15T13:23:07.790Z
+-->
+
+<p>This guide, we'll walk through the process of crafting a hacking lab using VirtualBox. You can skip the part of creating a virtual machine if you want to install directly to a server or inside your homelab.</p>
+<h2>The Initial Phase: Getting Everything Set Up</h2>
+<p>In this first tutorial, I'll walk you through the initial steps of setting up your hacking lab. We'll cover the essential groundwork, including the installation of <strong>VirtualBox</strong>, configuring an <strong>Ubuntu Linux server</strong>, and installing the<strong> OWASP Bricks</strong> application for pentesting exercise. Keep in mind that this is just the beginning, and future posts will delve into setting up additional applications for more hacking lab exercises.</p>
+<h3>Step 1: Installing VirtualBox</h3>
+<p>To get started, we'll need a virtualization platform, and VirtualBox is the tool of choice. It's user-friendly and powerful, making it perfect for our hacking lab setup. You can download VirtualBox from their official website and follow the installation instructions tailored to your operating system.</p>
+<p><a href="https://www.virtualbox.org/wiki/Downloads?ref=albertlacasta.com">Downloads – Oracle VM VirtualBox</a></p>
+<figure class="image"><img src="https://www.virtualbox.org/favicon.ico" alt=""></figure>
+<figure class="image"><img src="https://www.virtualbox.org/graphics/vboxlogodown.png" alt=""></figure>
+<p>It's important to mention that we won't be providing a complete walkthrough of the VirtualBox installation process here, as the steps can differ across various operating systems.</p>
+<h3>Step 2: Configuring an Ubuntu Linux Server</h3>
+<p>Next, we'll set up an Ubuntu Linux server to serve as our hacking playground. Ubuntu is a popular choice due to its widespread community support.</p>
+<p><strong>1- Download Ubuntu Server ISO:</strong> Begin by visiting the official Ubuntu website and downloading the Ubuntu Server ISO file.</p>
+<p><a href="https://ubuntu.com/download/server?ref=albertlacasta.com">https://ubuntu.com/download/server</a></p>
+<figure class="image"><img src="https://albertlacasta.com/content/images/2023/08/Screenshot-2023-08-15-at-6.33.46-PM.png" alt=""></figure>
+<p><strong>2- Create a New Virtual Machine</strong>:</p>
+<p>Open VirtualBox and click "New" to create a new virtual machine.</p>
+<figure class="image"><img src="https://albertlacasta.com/content/images/2023/08/Screenshot-2023-08-15-at-6.53.09-PM.png" alt=""></figure>
+<p>Select the Ubuntu server ISO image. The OS type and version will automatically select.</p>
+<figure class="image"><img src="https://albertlacasta.com/content/images/2023/08/Screenshot-2023-08-15-at-7.02.39-PM.png" alt=""></figure>
+<p>Then set a username and password for the OS installation.</p>
+<figure class="image"><img src="https://albertlacasta.com/content/images/2023/08/Screenshot-2023-08-15-at-7.06.34-PM.png" alt=""></figure>
+<p>Allocate an appropriate amount of RAM and create a new virtual hard disk with the recommended size.</p>
+<figure class="image"><img src="https://albertlacasta.com/content/images/2023/08/Screenshot-2023-08-15-at-7.06.59-PM.png" alt=""></figure>
+<p>Opt for a disk size of 25GB, which should be sufficient. However, feel free to allocate more space if desired.</p>
+<figure class="image"><img src="https://albertlacasta.com/content/images/2023/08/Screenshot-2023-08-15-at-7.08.52-PM.png" alt=""></figure>
+<p><strong>3- Install Ubuntu:</strong> Start the newly created virtual machine. Follow the installation prompts, including language settings, network configuration, and user account setup.</p>
+<p>Consider installing the minimal version of Ubuntu server, as it eliminates unnecessary components present in the standard version. This approach not only conserves disk space but also aligns well with our specific requirements for the hacking lab setup.</p>
+<figure class="image"><img src="https://albertlacasta.com/content/images/2023/08/Screenshot-2023-08-15-at-7.11.38-PM.png" alt=""></figure>
+<p>Choose the "Guided - Use Entire Disk" option for the partitioning method if you're new to Linux.</p>
+<p>Click the "Install OpenSSH server" option. This selection grants us the ability to establish remote connections via command shell or Putty directly from our computer.</p>
+<figure class="image"><img src="https://albertlacasta.com/content/images/2023/08/Screenshot-2023-08-15-at-7.12.49-PM.png" alt=""></figure>
+<p>Wait for the installation to complete.</p>
+<figure class="image"><img src="https://albertlacasta.com/content/images/2023/08/Screenshot-2023-08-15-at-7.16.48-PM.png" alt=""></figure>
+<p><strong>4 - Networking Configuration:</strong> To ensure connectivity between your virtual machine and the rest of your lab network, configure the networking settings of your VirtualBox machine. Choose either Bridged, NAT, or Host-Only networking, depending on your needs and network setup.</p>
+<ol>
+  <li><strong>Bridged Networking</strong>: Connects the virtual machine directly to your local network, giving it its own IP address. Useful for accessing network resources and hosting servers.</li>
+  <li><strong>NAT (Network Address Translation)</strong>: Creates a separate network for the virtual machine, with the host acting as an intermediary for external access. Ideal for internet access while maintaining isolation.</li>
+  <li><strong>Host-Only Networking</strong>: Sets up a private network between the host and virtual machines. Useful for isolated development or testing environments.</li>
+</ol>
+<p>Ensure the VM is powered off before making any network type changes. In my scenario, I opted for Bridged networking to grant access to the Virtual machine from any computer within my network.</p>
+<figure class="image"><img src="https://albertlacasta.com/content/images/2023/08/Screenshot-2023-08-15-at-7.22.47-PM.png" alt=""></figure>
+<p>Now we will set a static IP for the virtual machine. Log in with your user credentials and the run the follwong comands:</p>
+<pre><code class="language-plaintext">sudo su
+</code></pre>
+<p>Edit the netplan config file inside <strong>/etc/netplan :</strong></p>
+<pre><code class="language-plaintext">nano /etc/netplan/00-installer-config.yaml
+</code></pre>
+<p>💡</p>
+<p>Yoy might not have the same filename. Just edit the only .yaml file that exist in the /etc/netplan folder.</p>
+<p>When editing YAML files, ensure adherence to YAML code indentation standards. Incorrect syntax could result in non-application of the intended changes.</p>
+<p>Change the addresses, gateway4 and dns four your needs and network configuration.</p>
+<pre><code class="language-plaintext">network:
+  version: 2
+  renderer: networkd
+  ethernets:
+    enp0s3:
+      dhcp4: no
+      addresses:
+        - 192.168.1.2/24
+      gateway4: 192.168.1.1
+      nameservers:
+          addresses: [8.8.8.8, 192.168.1.1]
+</code></pre>
+<p>Then apply the netplan changes:</p>
+<pre><code class="language-plaintext">sudo netplan apply
+</code></pre>
+<p>To confirm the correct application of settings, execute the "ip a" command for a quick check.</p>
+<p>By configuring an Ubuntu Linux server, you've established the cornerstone of your hacking lab environment. This versatile platform will be the canvas on which you create and explore a range of hacking scenarios and exercises. Keep in mind that while this guide focuses on Ubuntu, you can adapt the same principles to other Linux distributions if desired.</p>
+<h3>Step 3: Installing OWASP Bricks</h3>
+<p>OWASP Bricks is an intentionally vulnerable web application designed for learning and practicing web security techniques. It's an excellent starting point for our pentesting exercises.</p>
+<p>Before installing OWASP Bricks we need to install <strong>Apache, Git and PHP 8.1</strong>.</p>
+<pre><code class="language-plaintext">apt install apache git php8.1</code></pre>
+<p>Then clone the repository:</p>
+<pre><code class="language-plaintext">cd /car/www/html
+</code></pre>
+<pre><code class="language-plaintext">git clone https://github.com/itsos4devs/owasp-bricks
+</code></pre>
+<p><a href="https://github.com/itsos4devs/owasp-bricks?ref=albertlacasta.com">GitHub - itsos4devs/owasp-bricks: Intentionally vulnerable web App written in PHP with MYSQL to exercise hacking and investigate web security issues.</a></p>
+<p><a href="https://github.com/itsos4devs/owasp-bricks?ref=albertlacasta.com">Intentionally vulnerable web App written in PHP with MYSQL to exercise hacking and investigate web security issues. - GitHub - itsos4devs/owasp-bricks: Intentionally vulnerable web App written in P…</a></p>
+<p><a href="https://github.com/itsos4devs/owasp-bricks?ref=albertlacasta.com">GitHubitsos4devs</a></p>
+<p>Rename the folder from "owasp-bricks" to "bricks":</p>
+<pre><code class="language-plaintext">mv owasp-bricks bricks</code></pre>
+<p>After that, if we browse "<a href="http://192.168.1.2/bricks/?ref=albertlacasta.com">http://192.168.1.2/bricks/</a>" we will have the bricks page.</p>
+<figure class="image"><img src="https://albertlacasta.com/content/images/2023/08/Screenshot-2023-08-15-at-8.00.21-PM.png" alt=""></figure>
+<p>Under the menu "Bricks" we have different pages: login pages. file upload pages and content pages.</p>
+<figure class="image"><img src="https://albertlacasta.com/content/images/2023/08/Screenshot-2023-08-15-at-8.00.55-PM.png" alt=""></figure>
+<h2>Conclusion</h2>
+<p>With OWASP Bricks successfully installed, you've laid the foundation for your first pentesting application within your self-hosted hacking lab. This initial setup will provide you with the basic framework to start exploring and honing your ethical hacking skills.</p>
+<p>In future posts, we'll expand our hacking lab by adding more applications and challenges to diversify our learning experience.</p>
