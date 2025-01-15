@@ -1,0 +1,45 @@
+<!--
+title: Selfhosted Hacking Test pt 2
+description: 
+published: true
+date: 2025-01-15T13:28:06.531Z
+tags: 
+editor: ckeditor
+dateCreated: 2025-01-15T13:28:06.531Z
+-->
+
+<p>In this second part we will install <strong>OWASP Juice Shop</strong>.</p>
+<p>If you haven't already seen Part 1, I recommend checking it out before proceeding. In that section, I cover how to set up the lab, install the Ubuntu server, and guide you through running the initial application, OWASP Bricks. This foundation is crucial to fully grasp the upcoming steps.</p>
+<h2>Juice Shop OWASP</h2>
+<p><strong>Juice Shop</strong> is a deliberately insecure web application designed for the purpose of security training, awareness demonstrations, and testing. It's a project developed by the Open Web Application Security Project (OWASP), which is a community-driven organization focused on improving software security.</p>
+<p>Juice Shop is a prime example of a "capture the flag" (CTF) challenge. It contains a variety of intentionally created security vulnerabilities, such as SQL injection, cross-site scripting (XSS), and more. The objective of Juice Shop is to provide a safe environment for individuals to practice identifying and exploiting these vulnerabilities, thereby enhancing their understanding of web application security.</p>
+<h2>Installation</h2>
+<p>Installing the OWASP Juice Shop on an Ubuntu server involves setting up a vulnerable web application for security testing and education. Here's a step-by-step guide on how to install OWASP Juice Shop:</p>
+<h3>Install Required Dependencies</h3>
+<p><strong>Update Packages:</strong> Run the following commands to update the package list and upgrade existing packages:</p>
+<pre><code class="language-plaintext">sudo apt update
+sudo apt upgrade</code></pre>
+<p><strong>Install Node.js and npm:</strong> OWASP Juice Shop is built using Node.js, so you need to install it:</p>
+<pre><code class="language-plaintext">curl -sL https://deb.nodesource.com/setup_16.x -o /tmp/nodesource_setup.sh</code></pre>
+<pre><code class="language-plaintext">sudo bash /tmp/nodesource_setup.sh</code></pre>
+<pre><code class="language-plaintext">sudo apt install nodejs npm</code></pre>
+<h3>Clone the OWASP Juice Shop Repository</h3>
+<p>Navigate to the directory where you want to install <strong>Juice Shop</strong> and clone the repository:</p>
+<pre><code class="language-plaintext">cd /var/www/html
+git clone https://github.com/bkimminich/juice-shop.git</code></pre>
+<p><strong>Navigate to the Directory:</strong> Move into the cloned <strong>Juice Shop</strong> directory:</p>
+<pre><code class="language-plaintext">cd juice-shop</code></pre>
+<p><strong>Install Dependencies:</strong> Install Juice Shop's dependencies using npm:</p>
+<pre><code class="language-plaintext">npm install</code></pre>
+<h3>Install PM2 &amp; Run Juice Shop</h3>
+<p>Install <strong>PM2 globally</strong> using npm. PM2 is a popular process manager for Node.js applications that provides features like process management, monitoring, and automatic restarts.</p>
+<pre><code class="language-plaintext">sudo npm install -g pm2</code></pre>
+<p>Start the Juice Shop application using PM2:</p>
+<pre><code class="language-plaintext">pm2 start npm --name "juice-shop" -- start</code></pre>
+<figure class="image"><img src="https://albertlacasta.com/content/images/2023/08/Screenshot-2023-08-16-at-8.33.44-PM.png" alt="" srcset="https://albertlacasta.com/content/images/size/w600/2023/08/Screenshot-2023-08-16-at-8.33.44-PM.png 600w, https://albertlacasta.com/content/images/size/w1000/2023/08/Screenshot-2023-08-16-at-8.33.44-PM.png 1000w, https://albertlacasta.com/content/images/size/w1600/2023/08/Screenshot-2023-08-16-at-8.33.44-PM.png 1600w, https://albertlacasta.com/content/images/2023/08/Screenshot-2023-08-16-at-8.33.44-PM.png 2334w" sizes="100vw" width="2000"></figure>
+<p>Then configure <strong>PM2</strong> to start the Juice Shop application on server boot:</p>
+<pre><code class="language-plaintext">pm2 save</code></pre>
+<p>After running PM2, the Juice Shop will be readily accessible. Simply enter <a href="http://192.168.1.2:3000/?ref=albertlacasta.com">http://192.168.1.2:3000</a> in your web browser to access and interact with the Juice Shop application.</p>
+<figure class="image"><img src="https://albertlacasta.com/content/images/2023/08/Screenshot-2023-08-16-at-8.36.26-PM.png" alt="" srcset="https://albertlacasta.com/content/images/size/w600/2023/08/Screenshot-2023-08-16-at-8.36.26-PM.png 600w, https://albertlacasta.com/content/images/size/w1000/2023/08/Screenshot-2023-08-16-at-8.36.26-PM.png 1000w, https://albertlacasta.com/content/images/size/w1600/2023/08/Screenshot-2023-08-16-at-8.36.26-PM.png 1600w, https://albertlacasta.com/content/images/size/w2400/2023/08/Screenshot-2023-08-16-at-8.36.26-PM.png 2400w" sizes="100vw" width="2000"></figure>
+<h2>Conclusion</h2>
+<p>In conclusion, setting up the <strong>OWASP Juice Shop</strong> using <strong>PM2</strong> on an <strong>Ubuntu</strong> server offers a robust solution for deploying and managing this vulnerable web application. PM2 simplifies the process by ensuring smooth execution, automatic restarts, and convenient management through its command-line interface. With PM2 in place, accessing the Juice Shop becomes effortless, enabling users to engage with the application seamlessly.</p>
